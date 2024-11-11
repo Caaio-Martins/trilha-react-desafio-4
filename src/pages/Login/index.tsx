@@ -3,30 +3,28 @@ import Button from "../../components/Button";
 import Input from "../../components/Input";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
 import { Container, LoginContainer, Column, Spacing, Title } from "./styles";
 import { defaultValues, IFormLogin } from "./types";
 
 const schema = yup
   .object({
     email: yup.string().email("E-mail inválido").required("Campo obrigatório"),
-    password: yup
-      .string()
-      .min(6, "No minimo 6 caracteres")
-      .required("Campo obrigatório"),
+    password: yup.string().min(6, "No mínimo 6 caracteres").required("Campo obrigatório"),
   })
   .required();
 
 const Login = () => {
-  const {
-    control,
-    formState: { errors, isValid },
-  } = useForm<IFormLogin>({
+  const { control, handleSubmit, formState: { errors, isValid } } = useForm<IFormLogin>({
     resolver: yupResolver(schema),
     mode: "onBlur",
     defaultValues,
     reValidateMode: "onChange",
   });
+
+  const onSubmit = (data: IFormLogin) => {
+    // Lógica de autenticação
+    console.log("Dados enviados:", data);
+  };
 
   return (
     <Container>
@@ -49,7 +47,7 @@ const Login = () => {
             errorMessage={errors?.password?.message}
           />
           <Spacing />
-          <Button title="Entrar" />
+          <Button title="Entrar" onClick={handleSubmit(onSubmit)} disabled={!isValid} />
         </Column>
       </LoginContainer>
     </Container>
